@@ -1,0 +1,23 @@
+{
+  "name": "agentic-ai-skill-and-job-analysis-platform",
+  "version": "1.0.0",
+  "description": "Production Agentic AI Skill & Job Analysis Platform with Gemini 2.5, adaptive state machine, mathematical fit scoring, and micro-curriculums.",
+  "type": "module",
+  "scripts": {
+    "backend": "node backend/src/server.js",
+    "frontend": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "start": "node backend/src/server.js",
+    "test": "node backend/src/check_syntax.js"
+  },
+  "keywords": [
+    "agentic-ai",
+    "gemini",
+    "skill-assessment",
+    "job-matching",
+    "career-coach",
+    "state-machine"
+  ],
+  "author": "",
+  "license": "ISC"
+}

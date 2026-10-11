@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="refresh" content="0; url=http://127.0.0.1:3000">
+  <title>Agentic AI Skill &amp; Job Analysis Platform</title>
+  <meta name="description" content="Production-Grade Agentic AI Skill Assessment, Job Matching &amp; Adaptive Upskilling Platform powered by Google Gemini.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2306b6d4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background-color: #030712;
+      color: #f8fafc;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      overflow: hidden;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    /* Ambient animated radial glow */
+    .bg-mesh {
+      position: absolute;
+      inset: 0;
+      background: 
+        radial-gradient(circle at 50% 30%, rgba(6, 182, 212, 0.18) 0%, transparent 60%),
+        radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.12) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .click-target {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+      z-index: 10;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      background: rgba(6, 182, 212, 0.12);
+      border: 1px solid rgba(6, 182, 212, 0.35);
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #38bdf8;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      box-shadow: 0 0 25px rgba(6, 182, 212, 0.2);
+      animation: pulseGlow 2s infinite ease-in-out;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #10b981;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(6, 182, 212, 0.2); }
+      50% { transform: scale(1.03); box-shadow: 0 0 35px rgba(6, 182, 212, 0.4); }
+    }
+
+    .logo-glow {
+      width: 80px;
+      height: 80px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #06b6d4, #3b82f6, #8b5cf6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      box-shadow: 0 0 50px rgba(6, 182, 212, 0.5);
+      animation: floatLogo 3s ease-in-out infinite;
+    }
+
+    @keyframes floatLogo {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+
+    h1 {
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #ffffff 30%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.02em;
+    }
+
+    h1 span {
+      background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 1.15rem;
+      color: #94a3b8;
+      max-width: 600px;
+      margin-bottom: 36px;
+      line-height: 1.6;
+    }
+
+    /* Giant direct-action button */
+    .launch-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 18px 42px;
+      background: linear-gradient(135deg, #06b6d4 0%, #2563eb 100%);
+      color: #ffffff;
+      font-size: 1.2rem;
+      font-weight: 800;
+      border-radius: 16px;
+      text-decoration: none;
+      box-shadow: 0 10px 40px rgba(6, 182, 212, 0.4);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .launch-btn:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 16px 50px rgba(6, 182, 212, 0.6);
+    }
+
+    .launch-btn:active {
+      transform: translateY(1px) scale(0.98);
+    }
+
+    .redirect-status {
+      margin-top: 28px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(56, 189, 248, 0.3);
+      border-top-color: #38bdf8;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .hint-click {
+      margin-top: 14px;
+      font-size: 0.825rem;
+      color: #64748b;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .alt-links {
+      margin-top: 28px;
+      display: flex;
+      gap: 16px;
+    }
+
+    .alt-btn {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 10px;
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(51, 65, 85, 0.5);
+      transition: all 0.2s;
+    }
+
+    .alt-btn:hover {
+      color: #ffffff;
+      background: rgba(51, 65, 85, 0.8);
+      border-color: #38bdf8;
+    }
+  </style>
+</head>
+<body onclick="launchDirectWeb()">
+  <div class="bg-mesh"></div>
+
+  <div class="click-target">
+    <div class="logo-glow">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+      </svg>
+    </div>
+
+    <div class="badge">
+      <span class="badge-dot"></span>
+      Google Gemini API &bull; Live Web Active
+    </div>
+
+    <h1>Nexus <span>Agentic AI</span> Platform</h1>
+    <p class="subtitle">
+      Direct access to the real-time skills assessment engine, Google Bot, job matching, and autonomous upskilling roadmaps.
+    </p>
+
+    <!-- Direct Launch Button -->
+    <a href="http://127.0.0.1:3000" id="main-launch" class="launch-btn" onclick="launchDirectWeb(event)">
+      ⚡ Launch Live Web Application
+    </a>
+
+    <div class="redirect-status">
+      <div class="spinner"></div>
+      <span id="status-text">Directing to live web application...</span>
+    </div>
+
+    <div class="hint-click">
+      👉 Click anywhere on this screen to open immediately
+    </div>
+
+    <div class="alt-links" onclick="event.stopPropagation()">
+      <a href="http://127.0.0.1:3000" class="alt-btn" onclick="goTo('http://127.0.0.1:3000')">
+        Vite Dev Server (:3000)
+      </a>
+      <a href="http://127.0.0.1:5000" class="alt-btn" onclick="goTo('http://127.0.0.1:5000')">
+        Production Server (:5000)
+      </a>
+    </div>
+  </div>
+
+  <script>
+    const PRIMARY_URL = 'http://127.0.0.1:3000';
+    const FALLBACK_URL = 'http://127.0.0.1:5000';
+
+    function goTo(url) {
+      window.location.href = url;
+    }
+
+    function launchDirectWeb(e) {
+      if (e) e.preventDefault();
+      document.getElementById('status-text').textContent = 'Opening Web App now...';
+      window.location.href = PRIMARY_URL;
+    }
+
+    // Attempt automatic immediate redirect
+    (function autoRedirect() {
+      // Immediate replace in same window
+      try {
+        window.location.replace(PRIMARY_URL);
+      } catch (err) {
+        window.location.href = PRIMARY_URL;
+      }
+    })();
+  </script>
+</body>
+</html>

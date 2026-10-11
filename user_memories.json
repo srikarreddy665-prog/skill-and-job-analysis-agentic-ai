@@ -1,0 +1,128 @@
+[
+  {
+    "id": "mem_1",
+    "user_id": "user_demo_1",
+    "category": "career_goal",
+    "fact": "Targeting Senior / Staff Software Engineer roles at top tier tech companies (Google, Stripe, high-growth scaleups)",
+    "confidence": 0.95,
+    "source": "profile_initialization",
+    "timestamp": "2026-10-11T11:07:32.298Z"
+  },
+  {
+    "id": "mem_2",
+    "user_id": "user_demo_1",
+    "category": "preferred_stack",
+    "fact": "Primary stack: JavaScript/TypeScript, React 18, Node.js, REST APIs, and distributed systems architecture",
+    "confidence": 0.9,
+    "source": "profile_initialization",
+    "timestamp": "2026-10-11T11:07:32.298Z"
+  },
+  {
+    "id": "mem_3",
+    "user_id": "user_demo_1",
+    "category": "known_weakness",
+    "fact": "Actively working to overcome Cache Stampede vulnerabilities, Redis distributed mutexes, and database row lock contention",
+    "confidence": 0.88,
+    "source": "diagnostic_evaluation",
+    "timestamp": "2026-10-11T11:07:32.298Z"
+  },
+  {
+    "id": "mem_4",
+    "user_id": "user_demo_1",
+    "category": "learning_preference",
+    "fact": "Prefers practical failure-mode walkthroughs, trade-off analysis, and concrete code patterns over generic high-level summaries",
+    "confidence": 0.92,
+    "source": "mentor_interaction",
+    "timestamp": "2026-10-11T11:07:32.298Z"
+  },
+  {
+    "id": "mem_1791716865974_i3wh",
+    "user_id": "user_demo_1",
+    "category": "preferred_stack",
+    "fact": "Mentioned working with or asking about: Go, PostgreSQL, Postgres",
+    "confidence": 0.9,
+    "source": "mentor_chat",
+    "timestamp": "2026-10-11T11:07:45.974Z"
+  },
+  {
+    "id": "mem_1791716865975_gh5i",
+    "user_id": "user_demo_1",
+    "category": "career_goal",
+    "fact": "Expressed aspiration or inquiry regarding: Stripe, Staff Engineer",
+    "confidence": 0.88,
+    "source": "mentor_chat",
+    "timestamp": "2026-10-11T11:07:45.975Z"
+  },
+  {
+    "id": "mem_1791716865977_zw8u",
+    "user_id": "user_demo_1",
+    "category": "project_context",
+    "fact": "Shared active project/system detail: \"I am building a high-volume payments ledger in Go and PostgreSQL, targeting Staff Engineer at Stripe. Can you review concurrency pitfalls?\"",
+    "confidence": 0.92,
+    "source": "mentor_chat",
+    "timestamp": "2026-10-11T11:07:45.977Z"
+  },
+  {
+    "id": "mem_1791716876446_lua6",
+    "user_id": "user_demo_1",
+    "category": "project_context",
+    "fact": "Shared active project/system detail: \"What do you remember about my project and what company I want to join?\"",
+    "confidence": 0.92,
+    "source": "mentor_chat",
+    "timestamp": "2026-10-11T11:07:56.446Z"
+  },
+  {
+    "id": "mem_1791717072423_wc34",
+    "user_id": "user_demo_1",
+    "category": "preferred_stack",
+    "fact": "Mentioned working with or asking about: Go",
+    "confidence": 0.9,
+    "source": "mentor_chat",
+    "timestamp": "2026-10-11T11:11:12.423Z"
+  },
+  {
+    "id": "mem_1791717072425_xe4p",
+    "user_id": "user_demo_1",
+    "category": "project_context",
+    "fact": "Shared active project/system detail: \"What do you remember about my project and my goals?\"",
+    "confidence": 0.92,
+    "source": "mentor_chat",
+    "timestamp": "2026-10-11T11:11:12.425Z"
+  },
+  {
+    "id": "mem_1791717150497_bhnc",
+    "user_id": "user_demo_1",
+    "category": "career_goal",
+    "fact": "Expressed aspiration or inquiry regarding: Senior Engineer",
+    "confidence": 0.88,
+    "source": "google_bot_chat",
+    "timestamp": "2026-10-11T11:12:30.497Z"
+  },
+  {
+    "id": "mem_1791717915945_u12d",
+    "user_id": "user_demo_1",
+    "category": "focus_challenge",
+    "fact": "Asked for clarification or indicated challenge on: \"Can you explain quantum computing simply to a web developer?\"",
+    "confidence": 0.85,
+    "source": "google_bot_chat",
+    "timestamp": "2026-10-11T11:25:15.945Z"
+  },
+  {
+    "id": "mem_1791717921545_5kuc",
+    "user_id": "user_demo_1",
+    "category": "career_goal",
+    "fact": "Expressed aspiration or inquiry regarding: Google",
+    "confidence": 0.88,
+    "source": "google_bot_chat",
+    "timestamp": "2026-10-11T11:25:21.545Z"
+  },
+  {
+    "id": "mem_1791717974220_1yto",
+    "user_id": "user_demo_1",
+    "category": "focus_challenge",
+    "fact": "Asked for clarification or indicated challenge on: \"Explain distributed locks from first principles\"",
+    "confidence": 0.85,
+    "source": "google_bot_chat",
+    "timestamp": "2026-10-11T11:26:14.220Z"
+  }
+]

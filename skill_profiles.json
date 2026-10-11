@@ -1,0 +1,76 @@
+[
+  {
+    "session_id": "session_demo_1791716279157",
+    "user_id": "user_demo_1",
+    "domain": "Full Stack",
+    "updated_at": "2026-10-11T10:57:59.159Z",
+    "overall_readiness_tier": "Mid-Level Software Engineer",
+    "overall_score": 8,
+    "executive_summary": "Candidate exhibits solid pragmatic engineering intuition across Full Stack core workflows, demonstrating clear understanding of distributed patterns and REST endpoint contracts. However, critical gaps were observed in edge-case race conditions, cache invalidation guarantees, and deep database locking mechanics under sustained concurrency.",
+    "skill_matrix": {
+      "System Architecture": {
+        "score": 8.3,
+        "verified_level": "Expert",
+        "reasoning": "Articulated clean service boundaries and idempotent request tracking."
+      },
+      "Backend APIs & Microservices": {
+        "score": 8.6,
+        "verified_level": "Expert",
+        "reasoning": "Strong grasp of HTTP contracts, payload validation, and controller structuring."
+      },
+      "Database Optimization": {
+        "score": 6.8,
+        "verified_level": "Proficient",
+        "reasoning": "Basic understanding of indexes; struggled with row-level lock contention and SKIP LOCKED semantics."
+      },
+      "Caching & State (Redis/Memory)": {
+        "score": 6.5,
+        "verified_level": "Proficient",
+        "reasoning": "Mentions Redis TTLs, but lacked actionable solutions for Cache Stampede or dual-write consistency."
+      },
+      "Security & Auth (JWT/OAuth)": {
+        "score": 8.1,
+        "verified_level": "Expert",
+        "reasoning": "Accurately noted httpOnly cookie trade-offs and token expiration cycles."
+      },
+      "DevOps & CI/CD": {
+        "score": 7.2,
+        "verified_level": "Proficient",
+        "reasoning": "Familiar with Docker builds; limited familiarity with canary rollback triggers."
+      },
+      "Modern Frontend (React/Next)": {
+        "score": 8.4,
+        "verified_level": "Expert",
+        "reasoning": "Good intuition for component boundaries and client-state management."
+      }
+    },
+    "strengths": [
+      "Idempotency and API contract hygiene",
+      "Clean component modularity and standard architectural separation",
+      "Pragmatic approach to error handling and client notification"
+    ],
+    "critical_gaps": [
+      {
+        "skill": "Caching & State (Redis/Memory)",
+        "current_score": 6.5,
+        "benchmark_expected": 7.5,
+        "gap_severity": "High",
+        "details": "Lacks knowledge of cache stampede prevention (mutex locking / XFetch) and transactional outbox patterns for cache synchronization."
+      },
+      {
+        "skill": "Database Optimization",
+        "current_score": 6.8,
+        "benchmark_expected": 8,
+        "gap_severity": "High",
+        "details": "Unfamiliar with PostgreSQL query execution plans, connection pool exhaustion nuances, and pessimistic vs optimistic locking trade-offs."
+      },
+      {
+        "skill": "DevOps & CI/CD",
+        "current_score": 7.2,
+        "benchmark_expected": 7,
+        "gap_severity": "Medium",
+        "details": "Needs practical experience setting up zero-downtime rolling updates and automated canary rollbacks."
+      }
+    ]
+  }
+]

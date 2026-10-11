@@ -1,0 +1,333 @@
+[
+  {
+    "id": "job-fullstack-sr",
+    "title": "Senior Full Stack Engineer (Distributed Platforms)",
+    "company_type": "FinTech Scaleup",
+    "level": "Senior",
+    "domain": "Full Stack",
+    "salary_range": "$145,000 - $185,000",
+    "location": "Remote / Hybrid",
+    "description": "Build robust, customer-facing web applications with high-throughput backend services, reactive UI components, and enterprise-grade data security.",
+    "required_skills": [
+      {
+        "skill": "System Architecture",
+        "min_score": 8,
+        "weight": 9,
+        "importance": "Must-Have",
+        "description": "Clean microservices, async workflows, idempotency and modular design."
+      },
+      {
+        "skill": "Backend APIs & Microservices",
+        "min_score": 8,
+        "weight": 9,
+        "importance": "Must-Have",
+        "description": "Node.js/Express/Go endpoints, validation, error handling, rate limiting."
+      },
+      {
+        "skill": "Database Optimization",
+        "min_score": 7,
+        "weight": 8,
+        "importance": "Core",
+        "description": "PostgreSQL/MySQL indexing, transactions, ACID guarantees, query plan tuning."
+      },
+      {
+        "skill": "Modern Frontend (React/Next)",
+        "min_score": 8,
+        "weight": 8,
+        "importance": "Core",
+        "description": "React state management, SSR/CSR trade-offs, hooks, performance profiling."
+      },
+      {
+        "skill": "Caching & State (Redis/Memory)",
+        "min_score": 6,
+        "weight": 6,
+        "importance": "Core",
+        "description": "Cache invalidation strategies, write-through vs read-through, session stores."
+      },
+      {
+        "skill": "Security & Auth (JWT/OAuth)",
+        "min_score": 7,
+        "weight": 7,
+        "importance": "Core",
+        "description": "RBAC, CSRF/XSS mitigation, secure cookies, token expiration."
+      },
+      {
+        "skill": "DevOps & CI/CD",
+        "min_score": 6,
+        "weight": 5,
+        "importance": "Nice-to-Have",
+        "description": "Docker containers, automated test suites, deployment pipelines."
+      }
+    ]
+  },
+  {
+    "id": "job-backend-dist",
+    "title": "Staff Distributed Systems Engineer",
+    "company_type": "Cloud Infrastructure Enterprise",
+    "level": "Staff / Lead",
+    "domain": "Backend Systems",
+    "salary_range": "$175,000 - $220,000",
+    "location": "San Francisco, CA / Remote",
+    "description": "Design fault-tolerant distributed backends handling 50k+ QPS with p99 latencies under 20ms, robust consensus, and partitioned data stores.",
+    "required_skills": [
+      {
+        "skill": "System Architecture",
+        "min_score": 9,
+        "weight": 10,
+        "importance": "Must-Have",
+        "description": "High-scale distributed systems, event-driven patterns, CAP theorem tradeoffs."
+      },
+      {
+        "skill": "Backend APIs & Microservices",
+        "min_score": 9,
+        "weight": 9,
+        "importance": "Must-Have",
+        "description": "gRPC/REST concurrency, backpressure, circuit breakers, dead-letter queues."
+      },
+      {
+        "skill": "Database Optimization",
+        "min_score": 9,
+        "weight": 10,
+        "importance": "Must-Have",
+        "description": "Partitioning, sharding, replication lags, WAL, write-heavy optimizations."
+      },
+      {
+        "skill": "Caching & State (Redis/Memory)",
+        "min_score": 8,
+        "weight": 8,
+        "importance": "Core",
+        "description": "Distributed caching, cache stamps, Lua scripts, pub-sub clusters."
+      },
+      {
+        "skill": "Concurrency & Async",
+        "min_score": 9,
+        "weight": 9,
+        "importance": "Must-Have",
+        "description": "Thread pools, non-blocking I/O, race condition mitigation, lock contention."
+      },
+      {
+        "skill": "Observability & SRE",
+        "min_score": 7,
+        "weight": 6,
+        "importance": "Core",
+        "description": "Distributed tracing (OpenTelemetry), p99 metric alerts, Prometheus/Grafana."
+      }
+    ]
+  },
+  {
+    "id": "job-frontend-arch",
+    "title": "Lead Frontend Architect",
+    "company_type": "AI Developer Tooling",
+    "level": "Lead",
+    "domain": "Frontend Architecture",
+    "salary_range": "$150,000 - $190,000",
+    "location": "New York, NY / Remote",
+    "description": "Own the UI/UX architecture for high-velocity real-time dashboards, WebSockets streams, canvas visualizations, and micro-frontend integrations.",
+    "required_skills": [
+      {
+        "skill": "Modern Frontend (React/Next)",
+        "min_score": 9,
+        "weight": 10,
+        "importance": "Must-Have",
+        "description": "Advanced component architecture, custom hook composition, server components."
+      },
+      {
+        "skill": "Web Performance & Core Vitals",
+        "min_score": 8,
+        "weight": 9,
+        "importance": "Must-Have",
+        "description": "Bundle chunking, memoization, INP/LCP/CLS optimization, virtualized lists."
+      },
+      {
+        "skill": "State Management & Streams",
+        "min_score": 8,
+        "weight": 8,
+        "importance": "Core",
+        "description": "Zustand/Redux/Jotai, WebSocket sync, optimistic UI updates, conflict resolution."
+      },
+      {
+        "skill": "CSS & Design Systems",
+        "min_score": 8,
+        "weight": 7,
+        "importance": "Core",
+        "description": "Tailwind, CSS architecture, accessible design tokens, micro-interactions."
+      },
+      {
+        "skill": "Frontend Testing & Quality",
+        "min_score": 7,
+        "weight": 6,
+        "importance": "Core",
+        "description": "Vitest, Playwright E2E, mock service workers, snapshot resilience."
+      },
+      {
+        "skill": "Security & Auth (JWT/OAuth)",
+        "min_score": 7,
+        "weight": 6,
+        "importance": "Core",
+        "description": "Client-side XSS sanitization, CSP headers, credential storage."
+      }
+    ]
+  },
+  {
+    "id": "job-aiml-eng",
+    "title": "Senior AI/ML Platform & Agentic Engineer",
+    "company_type": "Applied AI Research Lab",
+    "level": "Senior",
+    "domain": "AI/ML Engineering",
+    "salary_range": "$160,000 - $210,000",
+    "location": "Remote",
+    "description": "Build autonomous multi-agent pipelines, RAG vector retrieval backends, prompt optimization loops, and production LLM evaluation guardrails.",
+    "required_skills": [
+      {
+        "skill": "LLM Orchestration & Agents",
+        "min_score": 9,
+        "weight": 10,
+        "importance": "Must-Have",
+        "description": "State machines, tool-calling loops, multi-agent consensus, plan-execute cycles."
+      },
+      {
+        "skill": "RAG & Vector Retrieval",
+        "min_score": 8,
+        "weight": 9,
+        "importance": "Must-Have",
+        "description": "Vector databases (Pinecone/Milvus/Qdrant), hybrid search, re-ranking, embeddings."
+      },
+      {
+        "skill": "Model Evaluation & Guardrails",
+        "min_score": 8,
+        "weight": 8,
+        "importance": "Core",
+        "description": "Hallucination detection, rubric grading, latency budgets, structured outputs."
+      },
+      {
+        "skill": "Backend APIs & Microservices",
+        "min_score": 8,
+        "weight": 8,
+        "importance": "Core",
+        "description": "Streaming SSE/WebSocket endpoints, prompt caching, token cost optimization."
+      },
+      {
+        "skill": "System Architecture",
+        "min_score": 7,
+        "weight": 7,
+        "importance": "Core",
+        "description": "Asynchronous worker queues, batch inference, rate-limit management."
+      },
+      {
+        "skill": "Data Pipelines & Embeddings",
+        "min_score": 7,
+        "weight": 6,
+        "importance": "Core",
+        "description": "Document chunking strategies, semantic indexing, metadata enrichment."
+      }
+    ]
+  },
+  {
+    "id": "job-cloud-devops",
+    "title": "Senior Cloud & Platform DevOps Engineer",
+    "company_type": "Global Payments Network",
+    "level": "Senior",
+    "domain": "Cloud & DevOps",
+    "salary_range": "$140,000 - $180,000",
+    "location": "Remote / Hybrid",
+    "description": "Scale Kubernetes clusters, build zero-downtime deployment pipelines, enforce infrastructure-as-code, and establish self-healing cloud topologies.",
+    "required_skills": [
+      {
+        "skill": "Kubernetes & Containers",
+        "min_score": 9,
+        "weight": 10,
+        "importance": "Must-Have",
+        "description": "K8s ingress, HPA autoscaling, Helm charts, sidecar patterns, networking."
+      },
+      {
+        "skill": "Infrastructure as Code (Terraform)",
+        "min_score": 8,
+        "weight": 9,
+        "importance": "Must-Have",
+        "description": "State locking, reusable modules, multi-region failover configurations."
+      },
+      {
+        "skill": "DevOps & CI/CD",
+        "min_score": 8,
+        "weight": 8,
+        "importance": "Core",
+        "description": "GitOps (ArgoCD), canary deployments, automated rollbacks, security scanning."
+      },
+      {
+        "skill": "Observability & SRE",
+        "min_score": 8,
+        "weight": 8,
+        "importance": "Core",
+        "description": "SLO/SLA definition, Prometheus metrics, distributed tracing, incident triage."
+      },
+      {
+        "skill": "Security & Auth (JWT/OAuth)",
+        "min_score": 7,
+        "weight": 7,
+        "importance": "Core",
+        "description": "Cloud IAM policies, secrets management (Vault), zero-trust architecture."
+      },
+      {
+        "skill": "System Architecture",
+        "min_score": 7,
+        "weight": 6,
+        "importance": "Core",
+        "description": "VPC peering, load balancers, CDN edge caching, egress cost optimization."
+      }
+    ]
+  },
+  {
+    "id": "job-data-eng",
+    "title": "Lead Data Systems & Pipeline Architect",
+    "company_type": "E-Commerce Intelligence",
+    "level": "Lead",
+    "domain": "Data Engineering",
+    "salary_range": "$150,000 - $195,000",
+    "location": "Remote",
+    "description": "Architect petabyte-scale data lakes and warehouses with real-time streaming ingestion, dbt transformations, and high-fidelity data contracts.",
+    "required_skills": [
+      {
+        "skill": "Database Optimization",
+        "min_score": 9,
+        "weight": 10,
+        "importance": "Must-Have",
+        "description": "BigQuery / Snowflake clustering, partitioning, storage tiering, query cost cuts."
+      },
+      {
+        "skill": "Data Modeling & Schemas",
+        "min_score": 8,
+        "weight": 9,
+        "importance": "Must-Have",
+        "description": "Star/snowflake schema, dimensional modeling, slowly changing dimensions (SCD)."
+      },
+      {
+        "skill": "Stream & Batch Processing",
+        "min_score": 8,
+        "weight": 9,
+        "importance": "Must-Have",
+        "description": "Kafka / PubSub, Apache Flink / Spark, idempotency, exactly-once delivery."
+      },
+      {
+        "skill": "Backend APIs & Microservices",
+        "min_score": 7,
+        "weight": 7,
+        "importance": "Core",
+        "description": "FastAPI/Express data APIs, webhook ingesters, schema validation."
+      },
+      {
+        "skill": "System Architecture",
+        "min_score": 8,
+        "weight": 7,
+        "importance": "Core",
+        "description": "End-to-end data pipelines, backpressure management, disaster recovery."
+      },
+      {
+        "skill": "Observability & SRE",
+        "min_score": 7,
+        "weight": 6,
+        "importance": "Core",
+        "description": "Data quality checks (Great Expectations), pipeline alerting, schema drift alerts."
+      }
+    ]
+  }
+]

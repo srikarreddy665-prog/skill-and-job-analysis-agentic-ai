@@ -1,0 +1,125 @@
+[
+  {
+    "roadmap_id": "roadmap_1791716279161",
+    "user_id": "user_demo_1",
+    "session_id": "session_demo_1791716279157",
+    "domain": "Full Stack",
+    "created_at": "2026-10-11T10:57:59.161Z",
+    "updated_at": "2026-10-11T10:57:59.161Z",
+    "roadmap_title": "Full Stack Acceleration Curriculum: Zero-to-Staff Readiness",
+    "estimated_time": "2-3 Weeks (Self-Paced)",
+    "executive_strategy": "Targeted focus on concurrency, caching resilience, and database isolation to elevate your candidate profile to Senior tier.",
+    "modules": [
+      {
+        "id": "mod_1",
+        "skill": "Caching & State (Redis/Memory)",
+        "current_score": 6.5,
+        "target_score": 9,
+        "priority": "High",
+        "stage_1_concept": {
+          "title": "Cache Stampede Invalidation & Probabilistic Expiration",
+          "key_takeaways": [
+            "Cache stampede occurs when high-concurrency requests hit an expired key simultaneously.",
+            "XFetch algorithm or mutex locks (SETNX with TTL) prevent backend database collapse.",
+            "Dual-write consistency vs CDC (Change Data Capture) outbox pattern."
+          ],
+          "mental_model": "Treat cache as an ephemeral acceleration layer; never rely on it as source of truth. Always isolate expiry from synchronous database recomputation.",
+          "recommended_reading": "Redis Documentation on Distributed Locks (Redlock) and High Availability Sentinel/Cluster"
+        },
+        "stage_2_hands_on_task": {
+          "title": "Implement Atomic Redis Token-Bucket Rate Limiter with Lua",
+          "scenario": "Design an Express middleware that protects a tier-1 payment endpoint from burst traffic without allowing race conditions between concurrent requests.",
+          "requirements": [
+            "Use Redis EVAL with an atomic Lua script to decrement token counts and reset window.",
+            "Return standard HTTP headers: X-RateLimit-Limit, X-RateLimit-Remaining, Retry-After.",
+            "Handle Redis connection timeouts gracefully with fail-open or local in-memory fallback."
+          ],
+          "starter_code": "// Express Rate Limiter Middleware Template\nimport redis from 'ioredis';\n\nconst client = new redis();\nconst LUA_TOKEN_BUCKET = `\n  local key = KEYS[1]\n  local limit = tonumber(ARGV[1])\n  local current = tonumber(redis.call('get', key) or '0')\n  if current + 1 > limit then\n    return 0\n  else\n    redis.call('incrby', key, 1)\n    if current == 0 then\n      redis.call('expire', key, ARGV[2])\n    end\n    return 1\n  end\n`;\n\nexport function rateLimiter(limit = 100, windowSec = 60) {\n  return async (req, res, next) => {\n    // TODO: Complete middleware logic\n  };\n}"
+        },
+        "stage_3_retest_trigger": {
+          "question_id": "retest_cache_1",
+          "prompt": "Suppose 10,000 requests hit your Redis token bucket rate limiter in the exact same millisecond. Describe how your Lua script guarantees zero race conditions compared to a standard Redis GET followed by INCR. Furthermore, if Redis goes offline, how does your middleware avoid taking down all traffic?",
+          "evaluation_criteria": [
+            "Explains single-threaded atomic execution of Redis Lua scripts.",
+            "Points out that GET followed by INCR creates a check-then-act race window.",
+            "Describes graceful circuit-breaking / fail-open strategy during Redis downtime."
+          ]
+        },
+        "status": "not_started"
+      },
+      {
+        "id": "mod_2",
+        "skill": "Database Optimization",
+        "current_score": 6.8,
+        "target_score": 9.3,
+        "priority": "High",
+        "stage_1_concept": {
+          "title": "PostgreSQL Lock Contention, Index Scans & Connection Pooling",
+          "key_takeaways": [
+            "Index scans (B-Tree, GiST, GIN) vs Sequential Table Scans.",
+            "Row-level locking semantics: SELECT FOR UPDATE vs SELECT FOR UPDATE SKIP LOCKED.",
+            "PgBouncer transaction-mode vs session-mode pooling and prepared statements."
+          ],
+          "mental_model": "Every transaction holds locks until COMMIT or ROLLBACK. Minimizing transaction hold time is paramount for high throughput.",
+          "recommended_reading": "PostgreSQL Official Manual: Chapter on Concurrency Control and Explicit Locking"
+        },
+        "stage_2_hands_on_task": {
+          "title": "Architect a Zero-Deadlock Background Job Queue with SKIP LOCKED",
+          "scenario": "Build a persistent job dispatcher in Node.js where 20 background workers pull unassigned jobs from a PostgreSQL jobs table concurrently.",
+          "requirements": [
+            "Write SQL transaction using SELECT ... FOR UPDATE SKIP LOCKED to prevent lock contention.",
+            "Ensure workers never process duplicate jobs or block each other.",
+            "Track retry counts and backoff failures into a dead-letter state."
+          ],
+          "starter_code": "async function claimNextJob(client, workerId) {\n  const query = `\n    UPDATE jobs\n    SET status = 'processing', worker_id = $1, started_at = NOW()\n    WHERE id = (\n      SELECT id FROM jobs\n      WHERE status = 'pending'\n      ORDER BY priority DESC, created_at ASC\n      FOR UPDATE SKIP LOCKED\n      LIMIT 1\n    )\n    RETURNING *;\n  `;\n  const result = await client.query(query, [workerId]);\n  return result.rows[0];\n}"
+        },
+        "stage_3_retest_trigger": {
+          "question_id": "retest_db_1",
+          "prompt": "Why does 'FOR UPDATE SKIP LOCKED' eliminate worker lock contention compared to standard 'FOR UPDATE' in high-volume queues? How does this interact with transaction isolation levels (Read Committed vs Repeatable Read)?",
+          "evaluation_criteria": [
+            "Clarifies that SKIP LOCKED skips already-locked rows without blocking.",
+            "Explains that standard FOR UPDATE queues workers in lock wait queues.",
+            "Mentions serialization anomaly handling under Repeatable Read."
+          ]
+        },
+        "status": "not_started"
+      },
+      {
+        "id": "mod_3",
+        "skill": "DevOps & CI/CD",
+        "current_score": 7.2,
+        "target_score": 9.5,
+        "priority": "Medium",
+        "stage_1_concept": {
+          "title": "Zero-Downtime Deployments & Automated Canary Analysis",
+          "key_takeaways": [
+            "Rolling updates vs Blue/Green vs Canary deployments.",
+            "Liveness, Readiness, and Startup probes in Kubernetes.",
+            "Automated rollbacks based on p99 latency and 5xx error rate thresholds."
+          ],
+          "mental_model": "Deployments should be continuous, verifiable experiments. Never switch 100% traffic without validating real production telemetry first.",
+          "recommended_reading": "Kubernetes Documentation on Pod Lifecycle and Deployment Strategies"
+        },
+        "stage_2_hands_on_task": {
+          "title": "Configure Canary Deployment with Automatic Rollback Metrics",
+          "scenario": "Create a deployment specification routing 10% of live traffic to canary pods, rolling back automatically if HTTP 5xx responses spike above 1%.",
+          "requirements": [
+            "Define readiness probes with appropriate initialDelaySeconds and failureThreshold.",
+            "Configure traffic splitting at ingress/service level.",
+            "Implement graceful SIGTERM shutdown handler in Node.js server."
+          ],
+          "starter_code": "process.on('SIGTERM', () => {\n  console.log('SIGTERM received. Closing HTTP server gracefully...');\n  server.close(() => {\n    console.log('HTTP connections drained. Closing DB pools...');\n    db.close().then(() => process.exit(0));\n  });\n});"
+        },
+        "stage_3_retest_trigger": {
+          "question_id": "retest_devops_1",
+          "prompt": "What is the difference between a Kubernetes liveness probe and a readiness probe during a rolling deployment? What catastrophic cascade occurs if a slow database query causes a liveness probe to fail?",
+          "evaluation_criteria": [
+            "Explains that readiness probe removes pod from service routing, while liveness restarts the container.",
+            "Explains that failing liveness restarts pods, exacerbating database load and causing death spirals."
+          ]
+        },
+        "status": "not_started"
+      }
+    ]
+  }
+]

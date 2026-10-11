@@ -1,0 +1,1277 @@
+[
+  {
+    "session_id": "session_demo_1791712431569",
+    "user_id": "user_demo_1",
+    "domain": "Full Stack",
+    "status": "completed",
+    "created_at": "2026-10-11T09:43:51.569Z",
+    "current_turn": 5,
+    "max_turns": 5,
+    "current_difficulty": "advanced",
+    "current_question": null,
+    "transcript": [
+      {
+        "turn_index": 1,
+        "question_id": "q1_init",
+        "topic": "System Architecture & API Design",
+        "difficulty": "intermediate",
+        "question_text": "How would you design the API and database operations to guarantee idempotency and prevent duplicate payments and race-condition double-spends without bringing down the database?",
+        "user_answer": "I would require clients to send a unique UUID Idempotency-Key header. On the backend, we check Redis for this key. If not present, we set it with a PENDING state and TTL. We begin a DB transaction, select the user account with FOR UPDATE to lock the balance row, check balance >= amount, debit the balance, record the ledger row, and commit. Then we update Redis to COMPLETED with the response body. If a duplicate request arrives while PENDING, it waits or returns 409 Conflict.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.5,
+          "summary": "Excellent answer. Idempotency keys + Redis status lock + pessimistic row locking on ledger balances directly prevents double-spends.",
+          "strengths_demonstrated": [
+            "Idempotency keys",
+            "Pessimistic row locking",
+            "Atomic state transitions"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T09:43:51.569Z"
+      },
+      {
+        "turn_index": 2,
+        "question_id": "q2_db",
+        "topic": "Database Optimization & Locking",
+        "difficulty": "advanced",
+        "question_text": "Walk through how you would diagnose lock contention, explain the trade-offs between optimistic locking with version columns versus SELECT FOR UPDATE SKIP LOCKED, and explain how connection pooling (e.g., PgBouncer) alters transaction semantics.",
+        "user_answer": "I look at pg_stat_activity to find blocking queries and lock wait times. For optimistic locking, we use version integers. If another update changes the version first, our WHERE version = :old fails and we retry in application code. That works well for low-contention reads. For job queues or worker pools, SKIP LOCKED is much better because workers immediately grab the next unlocked row without waiting in line. PgBouncer in transaction mode means prepared statements can break unless named prepared statements are disabled, but it drastically cuts connection overhead.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.2,
+          "summary": "Very good grasp of SKIP LOCKED and PgBouncer transaction pooling gotchas.",
+          "strengths_demonstrated": [
+            "SKIP LOCKED queue semantics",
+            "PgBouncer transaction mode limits"
+          ],
+          "gaps_identified": [
+            "Could discuss deeper dead-lock detection and graph cycles"
+          ]
+        },
+        "timestamp": "2026-10-11T09:45:51.569Z"
+      },
+      {
+        "turn_index": 3,
+        "question_id": "q3_cache",
+        "topic": "Caching & State Consistency",
+        "difficulty": "advanced",
+        "question_text": "What cache invalidation strategy would you deploy (Cache-Aside, Write-Through, Write-Behind, or CDC with Debezium)? How do you prevent Cache Stampede (Thundering Herd) when a hot product key expires?",
+        "user_answer": "We usually use Cache-Aside. When a key expires and thousands of requests miss, we get a stampede. To fix this, I set TTL and when it expires we just fetch from DB. Maybe we can put a lock in Redis before fetching from the DB.",
+        "feedback": {
+          "is_sound": false,
+          "score": 5.4,
+          "summary": "Identified Cache-Aside and basic lock concept, but missed probabilistic early expiration (XFetch algorithm) and atomic SETNX mutex handling.",
+          "strengths_demonstrated": [
+            "Basic cache-aside concept"
+          ],
+          "gaps_identified": [
+            "Cache stampede mitigation (XFetch / Mutex)",
+            "Dual-write synchronization"
+          ]
+        },
+        "timestamp": "2026-10-11T09:47:51.569Z"
+      },
+      {
+        "turn_index": 4,
+        "question_id": "q4_sec",
+        "topic": "Security & Auth Architecture",
+        "difficulty": "intermediate",
+        "question_text": "Where should the JWT or session token be stored (localStorage vs httpOnly SameSite Cookies) and why? How would you protect the API against CSRF attacks in both setups?",
+        "user_answer": "HttpOnly cookies are preferred because client-side JavaScript cannot read them, protecting against XSS token exfiltration. To prevent CSRF, we set SameSite=Lax or Strict, and issue a cryptographic CSRF token in a non-httpOnly cookie or header that the client echoes back on state-mutating requests (Synchronizer Token pattern).",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.8,
+          "summary": "Spot on explanation of XSS vs CSRF trade-offs and double-submit cookie / synchronizer token defense.",
+          "strengths_demonstrated": [
+            "HttpOnly cookie security",
+            "CSRF synchronizer token pattern"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T09:49:51.569Z"
+      },
+      {
+        "turn_index": 5,
+        "question_id": "q5_fe",
+        "topic": "Frontend Rendering & State Sync",
+        "difficulty": "advanced",
+        "question_text": "A live crypto trading dashboard in React suffers from frequent UI micro-freezes and excessive re-renders whenever the WebSocket pushes 50 ticks per second. How would you optimize React rendering performance?",
+        "user_answer": "50 ticks/sec will overwhelm React reconciler if every tick calls setState. I would buffer incoming ticks in a ref or queue and flush them to state using requestAnimationFrame or throttle to 60fps. I would also use useDeferredValue or useTransition for non-urgent chart updates, and use virtualized lists (react-window) for orderbook rows.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.9,
+          "summary": "Excellent performance engineering: RAF throttling, state buffering, React concurrency hooks, and virtualization.",
+          "strengths_demonstrated": [
+            "RAF batching",
+            "React Concurrent features",
+            "DOM virtualization"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T09:51:51.569Z"
+      }
+    ]
+  },
+  {
+    "session_id": "session_1791712984914",
+    "user_id": "user_demo_1",
+    "domain": "Full Stack",
+    "status": "in_progress",
+    "created_at": "2026-10-11T10:03:04.915Z",
+    "current_turn": 1,
+    "max_turns": 5,
+    "current_difficulty": "intermediate",
+    "resume_excerpt": null,
+    "current_question": {
+      "question_id": "q1_1791712984915",
+      "turn_index": 1,
+      "topic": "System Architecture & API Design",
+      "difficulty": "intermediate",
+      "scenario_context": "You are building a high-traffic checkout endpoint for a flash sale service where 10,000 users hit the purchase button simultaneously.",
+      "question_text": "How would you design the API and database operations to guarantee idempotency and prevent duplicate payments and race-condition double-spends without bringing down the database?",
+      "guidance": "Be specific about architectural patterns, failure modes, and trade-offs."
+    },
+    "transcript": []
+  },
+  {
+    "session_id": "session_demo_1791713138022",
+    "user_id": "user_demo_1",
+    "domain": "Full Stack",
+    "status": "completed",
+    "created_at": "2026-10-11T09:55:38.022Z",
+    "current_turn": 5,
+    "max_turns": 5,
+    "current_difficulty": "advanced",
+    "current_question": null,
+    "transcript": [
+      {
+        "turn_index": 1,
+        "question_id": "q1_init",
+        "topic": "System Architecture & API Design",
+        "difficulty": "intermediate",
+        "question_text": "How would you design the API and database operations to guarantee idempotency and prevent duplicate payments and race-condition double-spends without bringing down the database?",
+        "user_answer": "I would require clients to send a unique UUID Idempotency-Key header. On the backend, we check Redis for this key. If not present, we set it with a PENDING state and TTL. We begin a DB transaction, select the user account with FOR UPDATE to lock the balance row, check balance >= amount, debit the balance, record the ledger row, and commit. Then we update Redis to COMPLETED with the response body. If a duplicate request arrives while PENDING, it waits or returns 409 Conflict.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.5,
+          "summary": "Excellent answer. Idempotency keys + Redis status lock + pessimistic row locking on ledger balances directly prevents double-spends.",
+          "strengths_demonstrated": [
+            "Idempotency keys",
+            "Pessimistic row locking",
+            "Atomic state transitions"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T09:55:38.022Z"
+      },
+      {
+        "turn_index": 2,
+        "question_id": "q2_db",
+        "topic": "Database Optimization & Locking",
+        "difficulty": "advanced",
+        "question_text": "Walk through how you would diagnose lock contention, explain the trade-offs between optimistic locking with version columns versus SELECT FOR UPDATE SKIP LOCKED, and explain how connection pooling (e.g., PgBouncer) alters transaction semantics.",
+        "user_answer": "I look at pg_stat_activity to find blocking queries and lock wait times. For optimistic locking, we use version integers. If another update changes the version first, our WHERE version = :old fails and we retry in application code. That works well for low-contention reads. For job queues or worker pools, SKIP LOCKED is much better because workers immediately grab the next unlocked row without waiting in line. PgBouncer in transaction mode means prepared statements can break unless named prepared statements are disabled, but it drastically cuts connection overhead.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.2,
+          "summary": "Very good grasp of SKIP LOCKED and PgBouncer transaction pooling gotchas.",
+          "strengths_demonstrated": [
+            "SKIP LOCKED queue semantics",
+            "PgBouncer transaction mode limits"
+          ],
+          "gaps_identified": [
+            "Could discuss deeper dead-lock detection and graph cycles"
+          ]
+        },
+        "timestamp": "2026-10-11T09:57:38.022Z"
+      },
+      {
+        "turn_index": 3,
+        "question_id": "q3_cache",
+        "topic": "Caching & State Consistency",
+        "difficulty": "advanced",
+        "question_text": "What cache invalidation strategy would you deploy (Cache-Aside, Write-Through, Write-Behind, or CDC with Debezium)? How do you prevent Cache Stampede (Thundering Herd) when a hot product key expires?",
+        "user_answer": "We usually use Cache-Aside. When a key expires and thousands of requests miss, we get a stampede. To fix this, I set TTL and when it expires we just fetch from DB. Maybe we can put a lock in Redis before fetching from the DB.",
+        "feedback": {
+          "is_sound": false,
+          "score": 5.4,
+          "summary": "Identified Cache-Aside and basic lock concept, but missed probabilistic early expiration (XFetch algorithm) and atomic SETNX mutex handling.",
+          "strengths_demonstrated": [
+            "Basic cache-aside concept"
+          ],
+          "gaps_identified": [
+            "Cache stampede mitigation (XFetch / Mutex)",
+            "Dual-write synchronization"
+          ]
+        },
+        "timestamp": "2026-10-11T09:59:38.022Z"
+      },
+      {
+        "turn_index": 4,
+        "question_id": "q4_sec",
+        "topic": "Security & Auth Architecture",
+        "difficulty": "intermediate",
+        "question_text": "Where should the JWT or session token be stored (localStorage vs httpOnly SameSite Cookies) and why? How would you protect the API against CSRF attacks in both setups?",
+        "user_answer": "HttpOnly cookies are preferred because client-side JavaScript cannot read them, protecting against XSS token exfiltration. To prevent CSRF, we set SameSite=Lax or Strict, and issue a cryptographic CSRF token in a non-httpOnly cookie or header that the client echoes back on state-mutating requests (Synchronizer Token pattern).",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.8,
+          "summary": "Spot on explanation of XSS vs CSRF trade-offs and double-submit cookie / synchronizer token defense.",
+          "strengths_demonstrated": [
+            "HttpOnly cookie security",
+            "CSRF synchronizer token pattern"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T10:01:38.022Z"
+      },
+      {
+        "turn_index": 5,
+        "question_id": "q5_fe",
+        "topic": "Frontend Rendering & State Sync",
+        "difficulty": "advanced",
+        "question_text": "A live crypto trading dashboard in React suffers from frequent UI micro-freezes and excessive re-renders whenever the WebSocket pushes 50 ticks per second. How would you optimize React rendering performance?",
+        "user_answer": "50 ticks/sec will overwhelm React reconciler if every tick calls setState. I would buffer incoming ticks in a ref or queue and flush them to state using requestAnimationFrame or throttle to 60fps. I would also use useDeferredValue or useTransition for non-urgent chart updates, and use virtualized lists (react-window) for orderbook rows.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.9,
+          "summary": "Excellent performance engineering: RAF throttling, state buffering, React concurrency hooks, and virtualization.",
+          "strengths_demonstrated": [
+            "RAF batching",
+            "React Concurrent features",
+            "DOM virtualization"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T10:03:38.022Z"
+      }
+    ]
+  },
+  {
+    "session_id": "session_demo_1791713138701",
+    "user_id": "user_demo_1",
+    "domain": "Full Stack",
+    "status": "completed",
+    "created_at": "2026-10-11T09:55:38.701Z",
+    "current_turn": 5,
+    "max_turns": 5,
+    "current_difficulty": "advanced",
+    "current_question": null,
+    "transcript": [
+      {
+        "turn_index": 1,
+        "question_id": "q1_init",
+        "topic": "System Architecture & API Design",
+        "difficulty": "intermediate",
+        "question_text": "How would you design the API and database operations to guarantee idempotency and prevent duplicate payments and race-condition double-spends without bringing down the database?",
+        "user_answer": "I would require clients to send a unique UUID Idempotency-Key header. On the backend, we check Redis for this key. If not present, we set it with a PENDING state and TTL. We begin a DB transaction, select the user account with FOR UPDATE to lock the balance row, check balance >= amount, debit the balance, record the ledger row, and commit. Then we update Redis to COMPLETED with the response body. If a duplicate request arrives while PENDING, it waits or returns 409 Conflict.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.5,
+          "summary": "Excellent answer. Idempotency keys + Redis status lock + pessimistic row locking on ledger balances directly prevents double-spends.",
+          "strengths_demonstrated": [
+            "Idempotency keys",
+            "Pessimistic row locking",
+            "Atomic state transitions"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T09:55:38.701Z"
+      },
+      {
+        "turn_index": 2,
+        "question_id": "q2_db",
+        "topic": "Database Optimization & Locking",
+        "difficulty": "advanced",
+        "question_text": "Walk through how you would diagnose lock contention, explain the trade-offs between optimistic locking with version columns versus SELECT FOR UPDATE SKIP LOCKED, and explain how connection pooling (e.g., PgBouncer) alters transaction semantics.",
+        "user_answer": "I look at pg_stat_activity to find blocking queries and lock wait times. For optimistic locking, we use version integers. If another update changes the version first, our WHERE version = :old fails and we retry in application code. That works well for low-contention reads. For job queues or worker pools, SKIP LOCKED is much better because workers immediately grab the next unlocked row without waiting in line. PgBouncer in transaction mode means prepared statements can break unless named prepared statements are disabled, but it drastically cuts connection overhead.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.2,
+          "summary": "Very good grasp of SKIP LOCKED and PgBouncer transaction pooling gotchas.",
+          "strengths_demonstrated": [
+            "SKIP LOCKED queue semantics",
+            "PgBouncer transaction mode limits"
+          ],
+          "gaps_identified": [
+            "Could discuss deeper dead-lock detection and graph cycles"
+          ]
+        },
+        "timestamp": "2026-10-11T09:57:38.701Z"
+      },
+      {
+        "turn_index": 3,
+        "question_id": "q3_cache",
+        "topic": "Caching & State Consistency",
+        "difficulty": "advanced",
+        "question_text": "What cache invalidation strategy would you deploy (Cache-Aside, Write-Through, Write-Behind, or CDC with Debezium)? How do you prevent Cache Stampede (Thundering Herd) when a hot product key expires?",
+        "user_answer": "We usually use Cache-Aside. When a key expires and thousands of requests miss, we get a stampede. To fix this, I set TTL and when it expires we just fetch from DB. Maybe we can put a lock in Redis before fetching from the DB.",
+        "feedback": {
+          "is_sound": false,
+          "score": 5.4,
+          "summary": "Identified Cache-Aside and basic lock concept, but missed probabilistic early expiration (XFetch algorithm) and atomic SETNX mutex handling.",
+          "strengths_demonstrated": [
+            "Basic cache-aside concept"
+          ],
+          "gaps_identified": [
+            "Cache stampede mitigation (XFetch / Mutex)",
+            "Dual-write synchronization"
+          ]
+        },
+        "timestamp": "2026-10-11T09:59:38.701Z"
+      },
+      {
+        "turn_index": 4,
+        "question_id": "q4_sec",
+        "topic": "Security & Auth Architecture",
+        "difficulty": "intermediate",
+        "question_text": "Where should the JWT or session token be stored (localStorage vs httpOnly SameSite Cookies) and why? How would you protect the API against CSRF attacks in both setups?",
+        "user_answer": "HttpOnly cookies are preferred because client-side JavaScript cannot read them, protecting against XSS token exfiltration. To prevent CSRF, we set SameSite=Lax or Strict, and issue a cryptographic CSRF token in a non-httpOnly cookie or header that the client echoes back on state-mutating requests (Synchronizer Token pattern).",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.8,
+          "summary": "Spot on explanation of XSS vs CSRF trade-offs and double-submit cookie / synchronizer token defense.",
+          "strengths_demonstrated": [
+            "HttpOnly cookie security",
+            "CSRF synchronizer token pattern"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T10:01:38.701Z"
+      },
+      {
+        "turn_index": 5,
+        "question_id": "q5_fe",
+        "topic": "Frontend Rendering & State Sync",
+        "difficulty": "advanced",
+        "question_text": "A live crypto trading dashboard in React suffers from frequent UI micro-freezes and excessive re-renders whenever the WebSocket pushes 50 ticks per second. How would you optimize React rendering performance?",
+        "user_answer": "50 ticks/sec will overwhelm React reconciler if every tick calls setState. I would buffer incoming ticks in a ref or queue and flush them to state using requestAnimationFrame or throttle to 60fps. I would also use useDeferredValue or useTransition for non-urgent chart updates, and use virtualized lists (react-window) for orderbook rows.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.9,
+          "summary": "Excellent performance engineering: RAF throttling, state buffering, React concurrency hooks, and virtualization.",
+          "strengths_demonstrated": [
+            "RAF batching",
+            "React Concurrent features",
+            "DOM virtualization"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T10:03:38.701Z"
+      }
+    ]
+  },
+  {
+    "session_id": "session_demo_1791713138893",
+    "user_id": "user_demo_1",
+    "domain": "Full Stack",
+    "status": "completed",
+    "created_at": "2026-10-11T09:55:38.893Z",
+    "current_turn": 5,
+    "max_turns": 5,
+    "current_difficulty": "advanced",
+    "current_question": null,
+    "transcript": [
+      {
+        "turn_index": 1,
+        "question_id": "q1_init",
+        "topic": "System Architecture & API Design",
+        "difficulty": "intermediate",
+        "question_text": "How would you design the API and database operations to guarantee idempotency and prevent duplicate payments and race-condition double-spends without bringing down the database?",
+        "user_answer": "I would require clients to send a unique UUID Idempotency-Key header. On the backend, we check Redis for this key. If not present, we set it with a PENDING state and TTL. We begin a DB transaction, select the user account with FOR UPDATE to lock the balance row, check balance >= amount, debit the balance, record the ledger row, and commit. Then we update Redis to COMPLETED with the response body. If a duplicate request arrives while PENDING, it waits or returns 409 Conflict.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.5,
+          "summary": "Excellent answer. Idempotency keys + Redis status lock + pessimistic row locking on ledger balances directly prevents double-spends.",
+          "strengths_demonstrated": [
+            "Idempotency keys",
+            "Pessimistic row locking",
+            "Atomic state transitions"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T09:55:38.893Z"
+      },
+      {
+        "turn_index": 2,
+        "question_id": "q2_db",
+        "topic": "Database Optimization & Locking",
+        "difficulty": "advanced",
+        "question_text": "Walk through how you would diagnose lock contention, explain the trade-offs between optimistic locking with version columns versus SELECT FOR UPDATE SKIP LOCKED, and explain how connection pooling (e.g., PgBouncer) alters transaction semantics.",
+        "user_answer": "I look at pg_stat_activity to find blocking queries and lock wait times. For optimistic locking, we use version integers. If another update changes the version first, our WHERE version = :old fails and we retry in application code. That works well for low-contention reads. For job queues or worker pools, SKIP LOCKED is much better because workers immediately grab the next unlocked row without waiting in line. PgBouncer in transaction mode means prepared statements can break unless named prepared statements are disabled, but it drastically cuts connection overhead.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.2,
+          "summary": "Very good grasp of SKIP LOCKED and PgBouncer transaction pooling gotchas.",
+          "strengths_demonstrated": [
+            "SKIP LOCKED queue semantics",
+            "PgBouncer transaction mode limits"
+          ],
+          "gaps_identified": [
+            "Could discuss deeper dead-lock detection and graph cycles"
+          ]
+        },
+        "timestamp": "2026-10-11T09:57:38.893Z"
+      },
+      {
+        "turn_index": 3,
+        "question_id": "q3_cache",
+        "topic": "Caching & State Consistency",
+        "difficulty": "advanced",
+        "question_text": "What cache invalidation strategy would you deploy (Cache-Aside, Write-Through, Write-Behind, or CDC with Debezium)? How do you prevent Cache Stampede (Thundering Herd) when a hot product key expires?",
+        "user_answer": "We usually use Cache-Aside. When a key expires and thousands of requests miss, we get a stampede. To fix this, I set TTL and when it expires we just fetch from DB. Maybe we can put a lock in Redis before fetching from the DB.",
+        "feedback": {
+          "is_sound": false,
+          "score": 5.4,
+          "summary": "Identified Cache-Aside and basic lock concept, but missed probabilistic early expiration (XFetch algorithm) and atomic SETNX mutex handling.",
+          "strengths_demonstrated": [
+            "Basic cache-aside concept"
+          ],
+          "gaps_identified": [
+            "Cache stampede mitigation (XFetch / Mutex)",
+            "Dual-write synchronization"
+          ]
+        },
+        "timestamp": "2026-10-11T09:59:38.893Z"
+      },
+      {
+        "turn_index": 4,
+        "question_id": "q4_sec",
+        "topic": "Security & Auth Architecture",
+        "difficulty": "intermediate",
+        "question_text": "Where should the JWT or session token be stored (localStorage vs httpOnly SameSite Cookies) and why? How would you protect the API against CSRF attacks in both setups?",
+        "user_answer": "HttpOnly cookies are preferred because client-side JavaScript cannot read them, protecting against XSS token exfiltration. To prevent CSRF, we set SameSite=Lax or Strict, and issue a cryptographic CSRF token in a non-httpOnly cookie or header that the client echoes back on state-mutating requests (Synchronizer Token pattern).",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.8,
+          "summary": "Spot on explanation of XSS vs CSRF trade-offs and double-submit cookie / synchronizer token defense.",
+          "strengths_demonstrated": [
+            "HttpOnly cookie security",
+            "CSRF synchronizer token pattern"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T10:01:38.893Z"
+      },
+      {
+        "turn_index": 5,
+        "question_id": "q5_fe",
+        "topic": "Frontend Rendering & State Sync",
+        "difficulty": "advanced",
+        "question_text": "A live crypto trading dashboard in React suffers from frequent UI micro-freezes and excessive re-renders whenever the WebSocket pushes 50 ticks per second. How would you optimize React rendering performance?",
+        "user_answer": "50 ticks/sec will overwhelm React reconciler if every tick calls setState. I would buffer incoming ticks in a ref or queue and flush them to state using requestAnimationFrame or throttle to 60fps. I would also use useDeferredValue or useTransition for non-urgent chart updates, and use virtualized lists (react-window) for orderbook rows.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.9,
+          "summary": "Excellent performance engineering: RAF throttling, state buffering, React concurrency hooks, and virtualization.",
+          "strengths_demonstrated": [
+            "RAF batching",
+            "React Concurrent features",
+            "DOM virtualization"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T10:03:38.893Z"
+      }
+    ]
+  },
+  {
+    "session_id": "session_demo_1791713485236",
+    "user_id": "user_demo_1",
+    "domain": "Full Stack",
+    "status": "completed",
+    "created_at": "2026-10-11T10:01:25.236Z",
+    "current_turn": 5,
+    "max_turns": 5,
+    "current_difficulty": "advanced",
+    "current_question": null,
+    "transcript": [
+      {
+        "turn_index": 1,
+        "question_id": "q1_init",
+        "topic": "System Architecture & API Design",
+        "difficulty": "intermediate",
+        "question_text": "How would you design the API and database operations to guarantee idempotency and prevent duplicate payments and race-condition double-spends without bringing down the database?",
+        "user_answer": "I would require clients to send a unique UUID Idempotency-Key header. On the backend, we check Redis for this key. If not present, we set it with a PENDING state and TTL. We begin a DB transaction, select the user account with FOR UPDATE to lock the balance row, check balance >= amount, debit the balance, record the ledger row, and commit. Then we update Redis to COMPLETED with the response body. If a duplicate request arrives while PENDING, it waits or returns 409 Conflict.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.5,
+          "summary": "Excellent answer. Idempotency keys + Redis status lock + pessimistic row locking on ledger balances directly prevents double-spends.",
+          "strengths_demonstrated": [
+            "Idempotency keys",
+            "Pessimistic row locking",
+            "Atomic state transitions"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T10:01:25.236Z"
+      },
+      {
+        "turn_index": 2,
+        "question_id": "q2_db",
+        "topic": "Database Optimization & Locking",
+        "difficulty": "advanced",
+        "question_text": "Walk through how you would diagnose lock contention, explain the trade-offs between optimistic locking with version columns versus SELECT FOR UPDATE SKIP LOCKED, and explain how connection pooling (e.g., PgBouncer) alters transaction semantics.",
+        "user_answer": "I look at pg_stat_activity to find blocking queries and lock wait times. For optimistic locking, we use version integers. If another update changes the version first, our WHERE version = :old fails and we retry in application code. That works well for low-contention reads. For job queues or worker pools, SKIP LOCKED is much better because workers immediately grab the next unlocked row without waiting in line. PgBouncer in transaction mode means prepared statements can break unless named prepared statements are disabled, but it drastically cuts connection overhead.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.2,
+          "summary": "Very good grasp of SKIP LOCKED and PgBouncer transaction pooling gotchas.",
+          "strengths_demonstrated": [
+            "SKIP LOCKED queue semantics",
+            "PgBouncer transaction mode limits"
+          ],
+          "gaps_identified": [
+            "Could discuss deeper dead-lock detection and graph cycles"
+          ]
+        },
+        "timestamp": "2026-10-11T10:03:25.236Z"
+      },
+      {
+        "turn_index": 3,
+        "question_id": "q3_cache",
+        "topic": "Caching & State Consistency",
+        "difficulty": "advanced",
+        "question_text": "What cache invalidation strategy would you deploy (Cache-Aside, Write-Through, Write-Behind, or CDC with Debezium)? How do you prevent Cache Stampede (Thundering Herd) when a hot product key expires?",
+        "user_answer": "We usually use Cache-Aside. When a key expires and thousands of requests miss, we get a stampede. To fix this, I set TTL and when it expires we just fetch from DB. Maybe we can put a lock in Redis before fetching from the DB.",
+        "feedback": {
+          "is_sound": false,
+          "score": 5.4,
+          "summary": "Identified Cache-Aside and basic lock concept, but missed probabilistic early expiration (XFetch algorithm) and atomic SETNX mutex handling.",
+          "strengths_demonstrated": [
+            "Basic cache-aside concept"
+          ],
+          "gaps_identified": [
+            "Cache stampede mitigation (XFetch / Mutex)",
+            "Dual-write synchronization"
+          ]
+        },
+        "timestamp": "2026-10-11T10:05:25.236Z"
+      },
+      {
+        "turn_index": 4,
+        "question_id": "q4_sec",
+        "topic": "Security & Auth Architecture",
+        "difficulty": "intermediate",
+        "question_text": "Where should the JWT or session token be stored (localStorage vs httpOnly SameSite Cookies) and why? How would you protect the API against CSRF attacks in both setups?",
+        "user_answer": "HttpOnly cookies are preferred because client-side JavaScript cannot read them, protecting against XSS token exfiltration. To prevent CSRF, we set SameSite=Lax or Strict, and issue a cryptographic CSRF token in a non-httpOnly cookie or header that the client echoes back on state-mutating requests (Synchronizer Token pattern).",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.8,
+          "summary": "Spot on explanation of XSS vs CSRF trade-offs and double-submit cookie / synchronizer token defense.",
+          "strengths_demonstrated": [
+            "HttpOnly cookie security",
+            "CSRF synchronizer token pattern"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T10:07:25.236Z"
+      },
+      {
+        "turn_index": 5,
+        "question_id": "q5_fe",
+        "topic": "Frontend Rendering & State Sync",
+        "difficulty": "advanced",
+        "question_text": "A live crypto trading dashboard in React suffers from frequent UI micro-freezes and excessive re-renders whenever the WebSocket pushes 50 ticks per second. How would you optimize React rendering performance?",
+        "user_answer": "50 ticks/sec will overwhelm React reconciler if every tick calls setState. I would buffer incoming ticks in a ref or queue and flush them to state using requestAnimationFrame or throttle to 60fps. I would also use useDeferredValue or useTransition for non-urgent chart updates, and use virtualized lists (react-window) for orderbook rows.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.9,
+          "summary": "Excellent performance engineering: RAF throttling, state buffering, React concurrency hooks, and virtualization.",
+          "strengths_demonstrated": [
+            "RAF batching",
+            "React Concurrent features",
+            "DOM virtualization"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T10:09:25.236Z"
+      }
+    ]
+  },
+  {
+    "session_id": "session_demo_1791715543980",
+    "user_id": "user_demo_1",
+    "domain": "Full Stack",
+    "status": "completed",
+    "created_at": "2026-10-11T10:35:43.980Z",
+    "current_turn": 5,
+    "max_turns": 5,
+    "current_difficulty": "advanced",
+    "current_question": null,
+    "transcript": [
+      {
+        "turn_index": 1,
+        "question_id": "q1_init",
+        "topic": "System Architecture & API Design",
+        "difficulty": "intermediate",
+        "question_text": "How would you design the API and database operations to guarantee idempotency and prevent duplicate payments and race-condition double-spends without bringing down the database?",
+        "user_answer": "I would require clients to send a unique UUID Idempotency-Key header. On the backend, we check Redis for this key. If not present, we set it with a PENDING state and TTL. We begin a DB transaction, select the user account with FOR UPDATE to lock the balance row, check balance >= amount, debit the balance, record the ledger row, and commit. Then we update Redis to COMPLETED with the response body. If a duplicate request arrives while PENDING, it waits or returns 409 Conflict.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.5,
+          "summary": "Excellent answer. Idempotency keys + Redis status lock + pessimistic row locking on ledger balances directly prevents double-spends.",
+          "strengths_demonstrated": [
+            "Idempotency keys",
+            "Pessimistic row locking",
+            "Atomic state transitions"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T10:35:43.980Z"
+      },
+      {
+        "turn_index": 2,
+        "question_id": "q2_db",
+        "topic": "Database Optimization & Locking",
+        "difficulty": "advanced",
+        "question_text": "Walk through how you would diagnose lock contention, explain the trade-offs between optimistic locking with version columns versus SELECT FOR UPDATE SKIP LOCKED, and explain how connection pooling (e.g., PgBouncer) alters transaction semantics.",
+        "user_answer": "I look at pg_stat_activity to find blocking queries and lock wait times. For optimistic locking, we use version integers. If another update changes the version first, our WHERE version = :old fails and we retry in application code. That works well for low-contention reads. For job queues or worker pools, SKIP LOCKED is much better because workers immediately grab the next unlocked row without waiting in line. PgBouncer in transaction mode means prepared statements can break unless named prepared statements are disabled, but it drastically cuts connection overhead.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.2,
+          "summary": "Very good grasp of SKIP LOCKED and PgBouncer transaction pooling gotchas.",
+          "strengths_demonstrated": [
+            "SKIP LOCKED queue semantics",
+            "PgBouncer transaction mode limits"
+          ],
+          "gaps_identified": [
+            "Could discuss deeper dead-lock detection and graph cycles"
+          ]
+        },
+        "timestamp": "2026-10-11T10:37:43.980Z"
+      },
+      {
+        "turn_index": 3,
+        "question_id": "q3_cache",
+        "topic": "Caching & State Consistency",
+        "difficulty": "advanced",
+        "question_text": "What cache invalidation strategy would you deploy (Cache-Aside, Write-Through, Write-Behind, or CDC with Debezium)? How do you prevent Cache Stampede (Thundering Herd) when a hot product key expires?",
+        "user_answer": "We usually use Cache-Aside. When a key expires and thousands of requests miss, we get a stampede. To fix this, I set TTL and when it expires we just fetch from DB. Maybe we can put a lock in Redis before fetching from the DB.",
+        "feedback": {
+          "is_sound": false,
+          "score": 5.4,
+          "summary": "Identified Cache-Aside and basic lock concept, but missed probabilistic early expiration (XFetch algorithm) and atomic SETNX mutex handling.",
+          "strengths_demonstrated": [
+            "Basic cache-aside concept"
+          ],
+          "gaps_identified": [
+            "Cache stampede mitigation (XFetch / Mutex)",
+            "Dual-write synchronization"
+          ]
+        },
+        "timestamp": "2026-10-11T10:39:43.980Z"
+      },
+      {
+        "turn_index": 4,
+        "question_id": "q4_sec",
+        "topic": "Security & Auth Architecture",
+        "difficulty": "intermediate",
+        "question_text": "Where should the JWT or session token be stored (localStorage vs httpOnly SameSite Cookies) and why? How would you protect the API against CSRF attacks in both setups?",
+        "user_answer": "HttpOnly cookies are preferred because client-side JavaScript cannot read them, protecting against XSS token exfiltration. To prevent CSRF, we set SameSite=Lax or Strict, and issue a cryptographic CSRF token in a non-httpOnly cookie or header that the client echoes back on state-mutating requests (Synchronizer Token pattern).",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.8,
+          "summary": "Spot on explanation of XSS vs CSRF trade-offs and double-submit cookie / synchronizer token defense.",
+          "strengths_demonstrated": [
+            "HttpOnly cookie security",
+            "CSRF synchronizer token pattern"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T10:41:43.980Z"
+      },
+      {
+        "turn_index": 5,
+        "question_id": "q5_fe",
+        "topic": "Frontend Rendering & State Sync",
+        "difficulty": "advanced",
+        "question_text": "A live crypto trading dashboard in React suffers from frequent UI micro-freezes and excessive re-renders whenever the WebSocket pushes 50 ticks per second. How would you optimize React rendering performance?",
+        "user_answer": "50 ticks/sec will overwhelm React reconciler if every tick calls setState. I would buffer incoming ticks in a ref or queue and flush them to state using requestAnimationFrame or throttle to 60fps. I would also use useDeferredValue or useTransition for non-urgent chart updates, and use virtualized lists (react-window) for orderbook rows.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.9,
+          "summary": "Excellent performance engineering: RAF throttling, state buffering, React concurrency hooks, and virtualization.",
+          "strengths_demonstrated": [
+            "RAF batching",
+            "React Concurrent features",
+            "DOM virtualization"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T10:43:43.980Z"
+      }
+    ]
+  },
+  {
+    "session_id": "session_demo_1791715544707",
+    "user_id": "user_demo_1",
+    "domain": "Full Stack",
+    "status": "completed",
+    "created_at": "2026-10-11T10:35:44.707Z",
+    "current_turn": 5,
+    "max_turns": 5,
+    "current_difficulty": "advanced",
+    "current_question": null,
+    "transcript": [
+      {
+        "turn_index": 1,
+        "question_id": "q1_init",
+        "topic": "System Architecture & API Design",
+        "difficulty": "intermediate",
+        "question_text": "How would you design the API and database operations to guarantee idempotency and prevent duplicate payments and race-condition double-spends without bringing down the database?",
+        "user_answer": "I would require clients to send a unique UUID Idempotency-Key header. On the backend, we check Redis for this key. If not present, we set it with a PENDING state and TTL. We begin a DB transaction, select the user account with FOR UPDATE to lock the balance row, check balance >= amount, debit the balance, record the ledger row, and commit. Then we update Redis to COMPLETED with the response body. If a duplicate request arrives while PENDING, it waits or returns 409 Conflict.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.5,
+          "summary": "Excellent answer. Idempotency keys + Redis status lock + pessimistic row locking on ledger balances directly prevents double-spends.",
+          "strengths_demonstrated": [
+            "Idempotency keys",
+            "Pessimistic row locking",
+            "Atomic state transitions"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T10:35:44.707Z"
+      },
+      {
+        "turn_index": 2,
+        "question_id": "q2_db",
+        "topic": "Database Optimization & Locking",
+        "difficulty": "advanced",
+        "question_text": "Walk through how you would diagnose lock contention, explain the trade-offs between optimistic locking with version columns versus SELECT FOR UPDATE SKIP LOCKED, and explain how connection pooling (e.g., PgBouncer) alters transaction semantics.",
+        "user_answer": "I look at pg_stat_activity to find blocking queries and lock wait times. For optimistic locking, we use version integers. If another update changes the version first, our WHERE version = :old fails and we retry in application code. That works well for low-contention reads. For job queues or worker pools, SKIP LOCKED is much better because workers immediately grab the next unlocked row without waiting in line. PgBouncer in transaction mode means prepared statements can break unless named prepared statements are disabled, but it drastically cuts connection overhead.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.2,
+          "summary": "Very good grasp of SKIP LOCKED and PgBouncer transaction pooling gotchas.",
+          "strengths_demonstrated": [
+            "SKIP LOCKED queue semantics",
+            "PgBouncer transaction mode limits"
+          ],
+          "gaps_identified": [
+            "Could discuss deeper dead-lock detection and graph cycles"
+          ]
+        },
+        "timestamp": "2026-10-11T10:37:44.707Z"
+      },
+      {
+        "turn_index": 3,
+        "question_id": "q3_cache",
+        "topic": "Caching & State Consistency",
+        "difficulty": "advanced",
+        "question_text": "What cache invalidation strategy would you deploy (Cache-Aside, Write-Through, Write-Behind, or CDC with Debezium)? How do you prevent Cache Stampede (Thundering Herd) when a hot product key expires?",
+        "user_answer": "We usually use Cache-Aside. When a key expires and thousands of requests miss, we get a stampede. To fix this, I set TTL and when it expires we just fetch from DB. Maybe we can put a lock in Redis before fetching from the DB.",
+        "feedback": {
+          "is_sound": false,
+          "score": 5.4,
+          "summary": "Identified Cache-Aside and basic lock concept, but missed probabilistic early expiration (XFetch algorithm) and atomic SETNX mutex handling.",
+          "strengths_demonstrated": [
+            "Basic cache-aside concept"
+          ],
+          "gaps_identified": [
+            "Cache stampede mitigation (XFetch / Mutex)",
+            "Dual-write synchronization"
+          ]
+        },
+        "timestamp": "2026-10-11T10:39:44.707Z"
+      },
+      {
+        "turn_index": 4,
+        "question_id": "q4_sec",
+        "topic": "Security & Auth Architecture",
+        "difficulty": "intermediate",
+        "question_text": "Where should the JWT or session token be stored (localStorage vs httpOnly SameSite Cookies) and why? How would you protect the API against CSRF attacks in both setups?",
+        "user_answer": "HttpOnly cookies are preferred because client-side JavaScript cannot read them, protecting against XSS token exfiltration. To prevent CSRF, we set SameSite=Lax or Strict, and issue a cryptographic CSRF token in a non-httpOnly cookie or header that the client echoes back on state-mutating requests (Synchronizer Token pattern).",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.8,
+          "summary": "Spot on explanation of XSS vs CSRF trade-offs and double-submit cookie / synchronizer token defense.",
+          "strengths_demonstrated": [
+            "HttpOnly cookie security",
+            "CSRF synchronizer token pattern"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T10:41:44.707Z"
+      },
+      {
+        "turn_index": 5,
+        "question_id": "q5_fe",
+        "topic": "Frontend Rendering & State Sync",
+        "difficulty": "advanced",
+        "question_text": "A live crypto trading dashboard in React suffers from frequent UI micro-freezes and excessive re-renders whenever the WebSocket pushes 50 ticks per second. How would you optimize React rendering performance?",
+        "user_answer": "50 ticks/sec will overwhelm React reconciler if every tick calls setState. I would buffer incoming ticks in a ref or queue and flush them to state using requestAnimationFrame or throttle to 60fps. I would also use useDeferredValue or useTransition for non-urgent chart updates, and use virtualized lists (react-window) for orderbook rows.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.9,
+          "summary": "Excellent performance engineering: RAF throttling, state buffering, React concurrency hooks, and virtualization.",
+          "strengths_demonstrated": [
+            "RAF batching",
+            "React Concurrent features",
+            "DOM virtualization"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T10:43:44.707Z"
+      }
+    ]
+  },
+  {
+    "session_id": "session_demo_1791715544884",
+    "user_id": "user_demo_1",
+    "domain": "Full Stack",
+    "status": "completed",
+    "created_at": "2026-10-11T10:35:44.884Z",
+    "current_turn": 5,
+    "max_turns": 5,
+    "current_difficulty": "advanced",
+    "current_question": null,
+    "transcript": [
+      {
+        "turn_index": 1,
+        "question_id": "q1_init",
+        "topic": "System Architecture & API Design",
+        "difficulty": "intermediate",
+        "question_text": "How would you design the API and database operations to guarantee idempotency and prevent duplicate payments and race-condition double-spends without bringing down the database?",
+        "user_answer": "I would require clients to send a unique UUID Idempotency-Key header. On the backend, we check Redis for this key. If not present, we set it with a PENDING state and TTL. We begin a DB transaction, select the user account with FOR UPDATE to lock the balance row, check balance >= amount, debit the balance, record the ledger row, and commit. Then we update Redis to COMPLETED with the response body. If a duplicate request arrives while PENDING, it waits or returns 409 Conflict.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.5,
+          "summary": "Excellent answer. Idempotency keys + Redis status lock + pessimistic row locking on ledger balances directly prevents double-spends.",
+          "strengths_demonstrated": [
+            "Idempotency keys",
+            "Pessimistic row locking",
+            "Atomic state transitions"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T10:35:44.884Z"
+      },
+      {
+        "turn_index": 2,
+        "question_id": "q2_db",
+        "topic": "Database Optimization & Locking",
+        "difficulty": "advanced",
+        "question_text": "Walk through how you would diagnose lock contention, explain the trade-offs between optimistic locking with version columns versus SELECT FOR UPDATE SKIP LOCKED, and explain how connection pooling (e.g., PgBouncer) alters transaction semantics.",
+        "user_answer": "I look at pg_stat_activity to find blocking queries and lock wait times. For optimistic locking, we use version integers. If another update changes the version first, our WHERE version = :old fails and we retry in application code. That works well for low-contention reads. For job queues or worker pools, SKIP LOCKED is much better because workers immediately grab the next unlocked row without waiting in line. PgBouncer in transaction mode means prepared statements can break unless named prepared statements are disabled, but it drastically cuts connection overhead.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.2,
+          "summary": "Very good grasp of SKIP LOCKED and PgBouncer transaction pooling gotchas.",
+          "strengths_demonstrated": [
+            "SKIP LOCKED queue semantics",
+            "PgBouncer transaction mode limits"
+          ],
+          "gaps_identified": [
+            "Could discuss deeper dead-lock detection and graph cycles"
+          ]
+        },
+        "timestamp": "2026-10-11T10:37:44.884Z"
+      },
+      {
+        "turn_index": 3,
+        "question_id": "q3_cache",
+        "topic": "Caching & State Consistency",
+        "difficulty": "advanced",
+        "question_text": "What cache invalidation strategy would you deploy (Cache-Aside, Write-Through, Write-Behind, or CDC with Debezium)? How do you prevent Cache Stampede (Thundering Herd) when a hot product key expires?",
+        "user_answer": "We usually use Cache-Aside. When a key expires and thousands of requests miss, we get a stampede. To fix this, I set TTL and when it expires we just fetch from DB. Maybe we can put a lock in Redis before fetching from the DB.",
+        "feedback": {
+          "is_sound": false,
+          "score": 5.4,
+          "summary": "Identified Cache-Aside and basic lock concept, but missed probabilistic early expiration (XFetch algorithm) and atomic SETNX mutex handling.",
+          "strengths_demonstrated": [
+            "Basic cache-aside concept"
+          ],
+          "gaps_identified": [
+            "Cache stampede mitigation (XFetch / Mutex)",
+            "Dual-write synchronization"
+          ]
+        },
+        "timestamp": "2026-10-11T10:39:44.884Z"
+      },
+      {
+        "turn_index": 4,
+        "question_id": "q4_sec",
+        "topic": "Security & Auth Architecture",
+        "difficulty": "intermediate",
+        "question_text": "Where should the JWT or session token be stored (localStorage vs httpOnly SameSite Cookies) and why? How would you protect the API against CSRF attacks in both setups?",
+        "user_answer": "HttpOnly cookies are preferred because client-side JavaScript cannot read them, protecting against XSS token exfiltration. To prevent CSRF, we set SameSite=Lax or Strict, and issue a cryptographic CSRF token in a non-httpOnly cookie or header that the client echoes back on state-mutating requests (Synchronizer Token pattern).",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.8,
+          "summary": "Spot on explanation of XSS vs CSRF trade-offs and double-submit cookie / synchronizer token defense.",
+          "strengths_demonstrated": [
+            "HttpOnly cookie security",
+            "CSRF synchronizer token pattern"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T10:41:44.884Z"
+      },
+      {
+        "turn_index": 5,
+        "question_id": "q5_fe",
+        "topic": "Frontend Rendering & State Sync",
+        "difficulty": "advanced",
+        "question_text": "A live crypto trading dashboard in React suffers from frequent UI micro-freezes and excessive re-renders whenever the WebSocket pushes 50 ticks per second. How would you optimize React rendering performance?",
+        "user_answer": "50 ticks/sec will overwhelm React reconciler if every tick calls setState. I would buffer incoming ticks in a ref or queue and flush them to state using requestAnimationFrame or throttle to 60fps. I would also use useDeferredValue or useTransition for non-urgent chart updates, and use virtualized lists (react-window) for orderbook rows.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.9,
+          "summary": "Excellent performance engineering: RAF throttling, state buffering, React concurrency hooks, and virtualization.",
+          "strengths_demonstrated": [
+            "RAF batching",
+            "React Concurrent features",
+            "DOM virtualization"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T10:43:44.884Z"
+      }
+    ]
+  },
+  {
+    "session_id": "session_demo_1791716267149",
+    "user_id": "user_demo_1",
+    "domain": "Full Stack",
+    "status": "completed",
+    "created_at": "2026-10-11T10:47:47.149Z",
+    "current_turn": 5,
+    "max_turns": 5,
+    "current_difficulty": "advanced",
+    "current_question": null,
+    "transcript": [
+      {
+        "turn_index": 1,
+        "question_id": "q1_init",
+        "topic": "System Architecture & API Design",
+        "difficulty": "intermediate",
+        "question_text": "How would you design the API and database operations to guarantee idempotency and prevent duplicate payments and race-condition double-spends without bringing down the database?",
+        "user_answer": "I would require clients to send a unique UUID Idempotency-Key header. On the backend, we check Redis for this key. If not present, we set it with a PENDING state and TTL. We begin a DB transaction, select the user account with FOR UPDATE to lock the balance row, check balance >= amount, debit the balance, record the ledger row, and commit. Then we update Redis to COMPLETED with the response body. If a duplicate request arrives while PENDING, it waits or returns 409 Conflict.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.5,
+          "summary": "Excellent answer. Idempotency keys + Redis status lock + pessimistic row locking on ledger balances directly prevents double-spends.",
+          "strengths_demonstrated": [
+            "Idempotency keys",
+            "Pessimistic row locking",
+            "Atomic state transitions"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T10:47:47.149Z"
+      },
+      {
+        "turn_index": 2,
+        "question_id": "q2_db",
+        "topic": "Database Optimization & Locking",
+        "difficulty": "advanced",
+        "question_text": "Walk through how you would diagnose lock contention, explain the trade-offs between optimistic locking with version columns versus SELECT FOR UPDATE SKIP LOCKED, and explain how connection pooling (e.g., PgBouncer) alters transaction semantics.",
+        "user_answer": "I look at pg_stat_activity to find blocking queries and lock wait times. For optimistic locking, we use version integers. If another update changes the version first, our WHERE version = :old fails and we retry in application code. That works well for low-contention reads. For job queues or worker pools, SKIP LOCKED is much better because workers immediately grab the next unlocked row without waiting in line. PgBouncer in transaction mode means prepared statements can break unless named prepared statements are disabled, but it drastically cuts connection overhead.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.2,
+          "summary": "Very good grasp of SKIP LOCKED and PgBouncer transaction pooling gotchas.",
+          "strengths_demonstrated": [
+            "SKIP LOCKED queue semantics",
+            "PgBouncer transaction mode limits"
+          ],
+          "gaps_identified": [
+            "Could discuss deeper dead-lock detection and graph cycles"
+          ]
+        },
+        "timestamp": "2026-10-11T10:49:47.149Z"
+      },
+      {
+        "turn_index": 3,
+        "question_id": "q3_cache",
+        "topic": "Caching & State Consistency",
+        "difficulty": "advanced",
+        "question_text": "What cache invalidation strategy would you deploy (Cache-Aside, Write-Through, Write-Behind, or CDC with Debezium)? How do you prevent Cache Stampede (Thundering Herd) when a hot product key expires?",
+        "user_answer": "We usually use Cache-Aside. When a key expires and thousands of requests miss, we get a stampede. To fix this, I set TTL and when it expires we just fetch from DB. Maybe we can put a lock in Redis before fetching from the DB.",
+        "feedback": {
+          "is_sound": false,
+          "score": 5.4,
+          "summary": "Identified Cache-Aside and basic lock concept, but missed probabilistic early expiration (XFetch algorithm) and atomic SETNX mutex handling.",
+          "strengths_demonstrated": [
+            "Basic cache-aside concept"
+          ],
+          "gaps_identified": [
+            "Cache stampede mitigation (XFetch / Mutex)",
+            "Dual-write synchronization"
+          ]
+        },
+        "timestamp": "2026-10-11T10:51:47.149Z"
+      },
+      {
+        "turn_index": 4,
+        "question_id": "q4_sec",
+        "topic": "Security & Auth Architecture",
+        "difficulty": "intermediate",
+        "question_text": "Where should the JWT or session token be stored (localStorage vs httpOnly SameSite Cookies) and why? How would you protect the API against CSRF attacks in both setups?",
+        "user_answer": "HttpOnly cookies are preferred because client-side JavaScript cannot read them, protecting against XSS token exfiltration. To prevent CSRF, we set SameSite=Lax or Strict, and issue a cryptographic CSRF token in a non-httpOnly cookie or header that the client echoes back on state-mutating requests (Synchronizer Token pattern).",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.8,
+          "summary": "Spot on explanation of XSS vs CSRF trade-offs and double-submit cookie / synchronizer token defense.",
+          "strengths_demonstrated": [
+            "HttpOnly cookie security",
+            "CSRF synchronizer token pattern"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T10:53:47.149Z"
+      },
+      {
+        "turn_index": 5,
+        "question_id": "q5_fe",
+        "topic": "Frontend Rendering & State Sync",
+        "difficulty": "advanced",
+        "question_text": "A live crypto trading dashboard in React suffers from frequent UI micro-freezes and excessive re-renders whenever the WebSocket pushes 50 ticks per second. How would you optimize React rendering performance?",
+        "user_answer": "50 ticks/sec will overwhelm React reconciler if every tick calls setState. I would buffer incoming ticks in a ref or queue and flush them to state using requestAnimationFrame or throttle to 60fps. I would also use useDeferredValue or useTransition for non-urgent chart updates, and use virtualized lists (react-window) for orderbook rows.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.9,
+          "summary": "Excellent performance engineering: RAF throttling, state buffering, React concurrency hooks, and virtualization.",
+          "strengths_demonstrated": [
+            "RAF batching",
+            "React Concurrent features",
+            "DOM virtualization"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T10:55:47.149Z"
+      }
+    ]
+  },
+  {
+    "session_id": "session_demo_1791716278228",
+    "user_id": "user_demo_1",
+    "domain": "Full Stack",
+    "status": "completed",
+    "created_at": "2026-10-11T10:47:58.228Z",
+    "current_turn": 5,
+    "max_turns": 5,
+    "current_difficulty": "advanced",
+    "current_question": null,
+    "transcript": [
+      {
+        "turn_index": 1,
+        "question_id": "q1_init",
+        "topic": "System Architecture & API Design",
+        "difficulty": "intermediate",
+        "question_text": "How would you design the API and database operations to guarantee idempotency and prevent duplicate payments and race-condition double-spends without bringing down the database?",
+        "user_answer": "I would require clients to send a unique UUID Idempotency-Key header. On the backend, we check Redis for this key. If not present, we set it with a PENDING state and TTL. We begin a DB transaction, select the user account with FOR UPDATE to lock the balance row, check balance >= amount, debit the balance, record the ledger row, and commit. Then we update Redis to COMPLETED with the response body. If a duplicate request arrives while PENDING, it waits or returns 409 Conflict.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.5,
+          "summary": "Excellent answer. Idempotency keys + Redis status lock + pessimistic row locking on ledger balances directly prevents double-spends.",
+          "strengths_demonstrated": [
+            "Idempotency keys",
+            "Pessimistic row locking",
+            "Atomic state transitions"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T10:47:58.228Z"
+      },
+      {
+        "turn_index": 2,
+        "question_id": "q2_db",
+        "topic": "Database Optimization & Locking",
+        "difficulty": "advanced",
+        "question_text": "Walk through how you would diagnose lock contention, explain the trade-offs between optimistic locking with version columns versus SELECT FOR UPDATE SKIP LOCKED, and explain how connection pooling (e.g., PgBouncer) alters transaction semantics.",
+        "user_answer": "I look at pg_stat_activity to find blocking queries and lock wait times. For optimistic locking, we use version integers. If another update changes the version first, our WHERE version = :old fails and we retry in application code. That works well for low-contention reads. For job queues or worker pools, SKIP LOCKED is much better because workers immediately grab the next unlocked row without waiting in line. PgBouncer in transaction mode means prepared statements can break unless named prepared statements are disabled, but it drastically cuts connection overhead.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.2,
+          "summary": "Very good grasp of SKIP LOCKED and PgBouncer transaction pooling gotchas.",
+          "strengths_demonstrated": [
+            "SKIP LOCKED queue semantics",
+            "PgBouncer transaction mode limits"
+          ],
+          "gaps_identified": [
+            "Could discuss deeper dead-lock detection and graph cycles"
+          ]
+        },
+        "timestamp": "2026-10-11T10:49:58.228Z"
+      },
+      {
+        "turn_index": 3,
+        "question_id": "q3_cache",
+        "topic": "Caching & State Consistency",
+        "difficulty": "advanced",
+        "question_text": "What cache invalidation strategy would you deploy (Cache-Aside, Write-Through, Write-Behind, or CDC with Debezium)? How do you prevent Cache Stampede (Thundering Herd) when a hot product key expires?",
+        "user_answer": "We usually use Cache-Aside. When a key expires and thousands of requests miss, we get a stampede. To fix this, I set TTL and when it expires we just fetch from DB. Maybe we can put a lock in Redis before fetching from the DB.",
+        "feedback": {
+          "is_sound": false,
+          "score": 5.4,
+          "summary": "Identified Cache-Aside and basic lock concept, but missed probabilistic early expiration (XFetch algorithm) and atomic SETNX mutex handling.",
+          "strengths_demonstrated": [
+            "Basic cache-aside concept"
+          ],
+          "gaps_identified": [
+            "Cache stampede mitigation (XFetch / Mutex)",
+            "Dual-write synchronization"
+          ]
+        },
+        "timestamp": "2026-10-11T10:51:58.228Z"
+      },
+      {
+        "turn_index": 4,
+        "question_id": "q4_sec",
+        "topic": "Security & Auth Architecture",
+        "difficulty": "intermediate",
+        "question_text": "Where should the JWT or session token be stored (localStorage vs httpOnly SameSite Cookies) and why? How would you protect the API against CSRF attacks in both setups?",
+        "user_answer": "HttpOnly cookies are preferred because client-side JavaScript cannot read them, protecting against XSS token exfiltration. To prevent CSRF, we set SameSite=Lax or Strict, and issue a cryptographic CSRF token in a non-httpOnly cookie or header that the client echoes back on state-mutating requests (Synchronizer Token pattern).",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.8,
+          "summary": "Spot on explanation of XSS vs CSRF trade-offs and double-submit cookie / synchronizer token defense.",
+          "strengths_demonstrated": [
+            "HttpOnly cookie security",
+            "CSRF synchronizer token pattern"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T10:53:58.228Z"
+      },
+      {
+        "turn_index": 5,
+        "question_id": "q5_fe",
+        "topic": "Frontend Rendering & State Sync",
+        "difficulty": "advanced",
+        "question_text": "A live crypto trading dashboard in React suffers from frequent UI micro-freezes and excessive re-renders whenever the WebSocket pushes 50 ticks per second. How would you optimize React rendering performance?",
+        "user_answer": "50 ticks/sec will overwhelm React reconciler if every tick calls setState. I would buffer incoming ticks in a ref or queue and flush them to state using requestAnimationFrame or throttle to 60fps. I would also use useDeferredValue or useTransition for non-urgent chart updates, and use virtualized lists (react-window) for orderbook rows.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.9,
+          "summary": "Excellent performance engineering: RAF throttling, state buffering, React concurrency hooks, and virtualization.",
+          "strengths_demonstrated": [
+            "RAF batching",
+            "React Concurrent features",
+            "DOM virtualization"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T10:55:58.228Z"
+      }
+    ]
+  },
+  {
+    "session_id": "session_demo_1791716279157",
+    "user_id": "user_demo_1",
+    "domain": "Full Stack",
+    "status": "completed",
+    "created_at": "2026-10-11T10:47:59.157Z",
+    "current_turn": 5,
+    "max_turns": 5,
+    "current_difficulty": "advanced",
+    "current_question": null,
+    "transcript": [
+      {
+        "turn_index": 1,
+        "question_id": "q1_init",
+        "topic": "System Architecture & API Design",
+        "difficulty": "intermediate",
+        "question_text": "How would you design the API and database operations to guarantee idempotency and prevent duplicate payments and race-condition double-spends without bringing down the database?",
+        "user_answer": "I would require clients to send a unique UUID Idempotency-Key header. On the backend, we check Redis for this key. If not present, we set it with a PENDING state and TTL. We begin a DB transaction, select the user account with FOR UPDATE to lock the balance row, check balance >= amount, debit the balance, record the ledger row, and commit. Then we update Redis to COMPLETED with the response body. If a duplicate request arrives while PENDING, it waits or returns 409 Conflict.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.5,
+          "summary": "Excellent answer. Idempotency keys + Redis status lock + pessimistic row locking on ledger balances directly prevents double-spends.",
+          "strengths_demonstrated": [
+            "Idempotency keys",
+            "Pessimistic row locking",
+            "Atomic state transitions"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T10:47:59.157Z"
+      },
+      {
+        "turn_index": 2,
+        "question_id": "q2_db",
+        "topic": "Database Optimization & Locking",
+        "difficulty": "advanced",
+        "question_text": "Walk through how you would diagnose lock contention, explain the trade-offs between optimistic locking with version columns versus SELECT FOR UPDATE SKIP LOCKED, and explain how connection pooling (e.g., PgBouncer) alters transaction semantics.",
+        "user_answer": "I look at pg_stat_activity to find blocking queries and lock wait times. For optimistic locking, we use version integers. If another update changes the version first, our WHERE version = :old fails and we retry in application code. That works well for low-contention reads. For job queues or worker pools, SKIP LOCKED is much better because workers immediately grab the next unlocked row without waiting in line. PgBouncer in transaction mode means prepared statements can break unless named prepared statements are disabled, but it drastically cuts connection overhead.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.2,
+          "summary": "Very good grasp of SKIP LOCKED and PgBouncer transaction pooling gotchas.",
+          "strengths_demonstrated": [
+            "SKIP LOCKED queue semantics",
+            "PgBouncer transaction mode limits"
+          ],
+          "gaps_identified": [
+            "Could discuss deeper dead-lock detection and graph cycles"
+          ]
+        },
+        "timestamp": "2026-10-11T10:49:59.157Z"
+      },
+      {
+        "turn_index": 3,
+        "question_id": "q3_cache",
+        "topic": "Caching & State Consistency",
+        "difficulty": "advanced",
+        "question_text": "What cache invalidation strategy would you deploy (Cache-Aside, Write-Through, Write-Behind, or CDC with Debezium)? How do you prevent Cache Stampede (Thundering Herd) when a hot product key expires?",
+        "user_answer": "We usually use Cache-Aside. When a key expires and thousands of requests miss, we get a stampede. To fix this, I set TTL and when it expires we just fetch from DB. Maybe we can put a lock in Redis before fetching from the DB.",
+        "feedback": {
+          "is_sound": false,
+          "score": 5.4,
+          "summary": "Identified Cache-Aside and basic lock concept, but missed probabilistic early expiration (XFetch algorithm) and atomic SETNX mutex handling.",
+          "strengths_demonstrated": [
+            "Basic cache-aside concept"
+          ],
+          "gaps_identified": [
+            "Cache stampede mitigation (XFetch / Mutex)",
+            "Dual-write synchronization"
+          ]
+        },
+        "timestamp": "2026-10-11T10:51:59.157Z"
+      },
+      {
+        "turn_index": 4,
+        "question_id": "q4_sec",
+        "topic": "Security & Auth Architecture",
+        "difficulty": "intermediate",
+        "question_text": "Where should the JWT or session token be stored (localStorage vs httpOnly SameSite Cookies) and why? How would you protect the API against CSRF attacks in both setups?",
+        "user_answer": "HttpOnly cookies are preferred because client-side JavaScript cannot read them, protecting against XSS token exfiltration. To prevent CSRF, we set SameSite=Lax or Strict, and issue a cryptographic CSRF token in a non-httpOnly cookie or header that the client echoes back on state-mutating requests (Synchronizer Token pattern).",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.8,
+          "summary": "Spot on explanation of XSS vs CSRF trade-offs and double-submit cookie / synchronizer token defense.",
+          "strengths_demonstrated": [
+            "HttpOnly cookie security",
+            "CSRF synchronizer token pattern"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T10:53:59.157Z"
+      },
+      {
+        "turn_index": 5,
+        "question_id": "q5_fe",
+        "topic": "Frontend Rendering & State Sync",
+        "difficulty": "advanced",
+        "question_text": "A live crypto trading dashboard in React suffers from frequent UI micro-freezes and excessive re-renders whenever the WebSocket pushes 50 ticks per second. How would you optimize React rendering performance?",
+        "user_answer": "50 ticks/sec will overwhelm React reconciler if every tick calls setState. I would buffer incoming ticks in a ref or queue and flush them to state using requestAnimationFrame or throttle to 60fps. I would also use useDeferredValue or useTransition for non-urgent chart updates, and use virtualized lists (react-window) for orderbook rows.",
+        "feedback": {
+          "is_sound": true,
+          "score": 8.9,
+          "summary": "Excellent performance engineering: RAF throttling, state buffering, React concurrency hooks, and virtualization.",
+          "strengths_demonstrated": [
+            "RAF batching",
+            "React Concurrent features",
+            "DOM virtualization"
+          ],
+          "gaps_identified": []
+        },
+        "timestamp": "2026-10-11T10:55:59.157Z"
+      }
+    ]
+  }
+]
